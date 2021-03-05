@@ -1,79 +1,45 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet, Text, ScrollView, FlatList } from 'react-native';
+import { View, TextInput, Button, StyleSheet, Text,  FlatList } from 'react-native';
+import LembreteInput from './components/LembreteInput';
+
+import LembreteItem from './components/LembreteItem';
 
 export default function App() {
-  const [lembrete, setLembrete] = useState('');
   const [lembretes, setLembretes] = useState([]);
   const [contador, setContador] = useState(0);
-  const capturarLembrete = (lembrete) => {
-    setLembrete(lembrete);
-  }
-  const adicionarLembrete = () => {
+  
+  const adicionarLembrete = (lembrete) => {
     setLembretes(lembretes => {
       setContador (contador + 1);
       return [{key: contador.toString(), value: lembrete}, ...lembretes];
     })
-    //lembretes = [a, b, c]
-    //...lembretes = a, b, c operador spread
-    //console.log(lembrete);
+  }
+  const removerLembrete = (keyASerRemovida) => {
+    setLembretes(lembretes => {
+      return lembretes.filter((lembrete) => {
+        return lembrete.key !== keyASerRemovida;
+      });
+    });
   }
   return (
     <View style={styles.container}>
-     <View style={styles.lembreteInputView}>
-      {/*Usuário irá inserir lembretes aqui */}
-        <TextInput 
-          placeholder="Digite o lembrete..."
-          style={styles.lembreteTextInput}
-          onChangeText={capturarLembrete}
-        />
-        <View
-          style={styles.lembreteInputButton}
-        >
-        <Button          
-          title="+"
-          onPress={adicionarLembrete}
-        />
-        </View>
-     </View>
-     <View>
-    <View
-      style={{width: '80%', alignSelf: 'center'}}
-    >
-      <FlatList 
-        data={lembretes}
-        renderItem = {lembrete => (
-          <View style={styles.itemNaLista}>
-            <Text>{lembrete.item.value}</Text>
-          </View>
-        )}
-      />
-    </View>
-
-     {
-
-      /*
-      <ScrollView>
-      <View style={{alignItems: 'center'}}>
-        {
-          /*Aqui será exibida a lista de lembretes
-          lembretes.map((lembrete) => (
-            <View
-              key={lembrete}
-              style={styles.itemNaLista}
-            >
-              <Text>
-                {lembrete}
-              </Text>
-            </View>
-          ))
-        }
+      <LembreteInput onAdicionarLembrete={adicionarLembrete}/>     
+      <View>
+          <View
+            style={{width: '80%', alignSelf: 'center'}}
+          >
+            <FlatList 
+              data={lembretes}
+              renderItem = {lembrete => (
+                <LembreteItem 
+                  lembrete={lembrete.item.value} 
+                  chave={lembrete.item.key}
+                  onDelete={removerLembrete}
+                />
+              )}
+            />
+          </View>     
       </View>
-     </ScrollView>
-      */
-
-     }
-     
-     </View>
     </View>
   );
 }
